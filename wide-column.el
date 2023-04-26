@@ -1,4 +1,4 @@
-;;; wide-column.el --- Calls functions dependant on column position.
+;;; wide-column.el --- Calls functions dependant on column position -*- lexical-binding: t -*-
 ;; $Revision: 1.4 $
 ;; $Date: 2002/04/05 09:28:09 $
 
@@ -205,10 +205,10 @@ is set, or `fill-column' if it is not. See the documentation of
                        fill-column)))
               (if (> column-position start-width)
                   (progn
-                    (wide-column-call-affector)
+                    (wide-column-call-affector column-position start-width)
                     (setq wide-column-last-command-over-width-p t))
                 (if wide-column-last-command-over-width-p
-                    (progn (wide-column-call-affector)
+                    (progn (wide-column-call-affector column-position start-width)
                            (setq wide-column-last-command-over-width-p nil)))))))
     (error
      ;; this catches errors in this function, or in the affector
@@ -226,7 +226,7 @@ is set, or `fill-column' if it is not. See the documentation of
        (message "Error from `wide-column-affector-function' caught: %s"
                 (error-message-string err))))))
 
-(defun wide-column-call-affector ()
+(defun wide-column-call-affector (column-position start-width)
   "Call the affector with the column position."
   ;; sing hey diddle dey, for dynamic scoping
   (funcall wide-column-affector-function (- column-position start-width))
@@ -259,7 +259,8 @@ when your lines get too long."
 
 ;; define global-minor-mode
 (define-global-minor-mode global-wide-column-mode 
-  wide-column-mode wide-column-turn-on)
+  wide-column-mode wide-column-turn-on
+  :group 'wide-column)
       
 ;;       (add-hook
 ;;        'global-wide-column-mode-hook
